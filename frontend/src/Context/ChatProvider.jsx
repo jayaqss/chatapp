@@ -1,20 +1,21 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
 const ChatContext = createContext();
 
 const ChatProvider = ({ children }) => {
   const [selectedChat, setSelectedChat] = useState();
   const [user, setUser] = useState();
-  const [notification, setNotification] = useState([]);
-  const [chats, setChats] = useState();
+  const [chats, setChats] = useState([]);
 
-  const history = useNavigate();
+  const history = useHistory();
+  // console.log(history);
 
   useEffect(() => {
     const userInfo = JSON.parse(localStorage.getItem("userInfo"));
+    // console.log(userInfo);
     setUser(userInfo);
-    if (!userInfo) history.push("/");
+    // if (!userInfo) history.push("/");
   }, [history]);
 
   return (
@@ -24,8 +25,6 @@ const ChatProvider = ({ children }) => {
         setSelectedChat,
         user,
         setUser,
-        notification,
-        setNotification,
         chats,
         setChats,
       }}

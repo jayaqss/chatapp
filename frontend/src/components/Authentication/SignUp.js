@@ -143,7 +143,7 @@ const SignUp = () => {
       );
       toast({
         title: 'Registration Successful',
-        status: 'Success',
+        status: 'success',
         duration: 5000,
         isClosable: true,
         position: 'bottom',
