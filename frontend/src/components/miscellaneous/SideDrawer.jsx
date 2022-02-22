@@ -28,6 +28,9 @@ import { Spinner } from "@chakra-ui/spinner";
 import ProfileModal from "./ProfileModal";
 import UserListItem from "../userAvatar/UserListItem";
 import { ChatState } from "../../Context/ChatProvider";
+import { getSender } from "../../config/ChatLogics";
+import { effect } from "@chakra-ui/react";
+import { Badge } from 'rsuite';
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -35,7 +38,14 @@ function SideDrawer() {
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
 
-  const { setSelectedChat, user, chats, setChats } = ChatState();
+  const {
+    setSelectedChat,
+    user,
+    chats,
+    setChats,
+    notification,
+    setNotification,
+  } = ChatState();
   console.log(user);
 
   const toast = useToast();
@@ -144,10 +154,21 @@ function SideDrawer() {
         <div>
           <Menu>
             <MenuButton p={1}>
-              {/*  Notifications*/}
               <BellIcon fontSize="2xl" m={1} />
             </MenuButton>
-            {/* <MenuList ></MenuList> */}
+            <MenuList pl={2}>
+              {!notification.length && "No New Messages"}
+              {notification.map((notif) => (
+                <MenuItem key={notif._id} onClick={()=>{
+                  setSelectedChat(notif.chat);
+                  setNotification(notification.filter((n)=> n!==notif));
+                }}>
+                  {notif.chat.isGroupChat
+                    ? `New Message in${notif.chat.chatName}`
+                    : `New Message from ${getSender(user, notif.chat.users)}`}
+                </MenuItem>
+              ))}
+            </MenuList>
           </Menu>
           <Menu>
             <MenuButton as={Button} bg="white" rightIcon={<ChevronDownIcon />}>
