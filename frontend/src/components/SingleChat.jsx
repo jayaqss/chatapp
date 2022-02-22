@@ -16,9 +16,8 @@ import axios from "axios";
 import "./styles.css";
 import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
-import Lottie from "lottie-react";
+// import Lottie from "lottie-react";
 import animation from "../animation/typing.gif";
-
 
 const ENDPOINT = "http://localhost:5000";
 var socket, selectedChatCompare;
@@ -39,7 +38,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   const toast = useToast();
 
-  const { user, selectedChat, setSelectedChat,notification,setNotification } = ChatState();
+  const { user, selectedChat, setSelectedChat, notification, setNotification } =
+    ChatState();
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -57,7 +57,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         `/api/message/${selectedChat._id}`,
         config
       );
-      console.log(messages);
+      // console.log(messages);
       setMessages(data);
       setLoading(false);
 
@@ -130,11 +130,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         selectedChatCompare._id !== newMessageRecieved.chat._id
       ) {
         //notification
-        if(!notification.includes(newMessageRecieved)){
-          setNotification([newMessageRecieved,...notification]);
+        if (!notification.includes(newMessageRecieved)) {
+          setNotification([newMessageRecieved, ...notification]);
           setFetchAgain(!fetchAgain);
         }
-
       } else {
         setMessages([...messages, newMessageRecieved]);
       }
@@ -227,13 +226,18 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
               </div>
             )}
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
-              {isTyping ? 
+              {isTyping ? (
                 <div>
-                   <img height={30} width={50} src={animation} alt="loading..." />
+                  <img
+                    height={30}
+                    width={50}
+                    src={animation}
+                    alt="loading..."
+                  />
                 </div>
-               : 
+              ) : (
                 <></>
-              }
+              )}
               <Input
                 variant="filled"
                 bg="#E0E0E0"

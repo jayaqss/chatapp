@@ -2,63 +2,107 @@ const asyncHandler = require("express-async-handler");
 const User = require("../Models/userModel");
 const generateToken = require("../config/generateToken");
 
-const registerUser = asyncHandler(async (req, res) => {
-  const { name, email, password, picture } = req.body;
+//Added
+const { registerSchema, loginSchema } = require("../helpers/validationSchema");
+const nodemailer = require("nodemailer");
+const welcomeMail = require("../data/welcomeMail");
+var transport = nodemailer.createTransport({
+  host: "smtp.mailtrap.io",
+  port: 2525,
+  auth: {
+    user: "acd4b8fd341ff7",
+    pass: "7484a86d285338",
+  },
+});
 
-  if (!name || !email || !password) {
-    res.status(400);
-    throw new Error("Please Enter all the Fields");
-  }
+//
 
-  const userExists = await User.findOne({ email });
-
-  if (userExists) {
-    res.status(400);
-    throw new Error("User already exists");
-  }
-
-  const user = await User.create({ name, email, password, picture });
-
-  if (user) {
-    res.status(201).json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      picture: user.picture,
-      token: generateToken(user._id),
+const registerUser = asyncHandler(async (req, res, next) => {
+  try {
+    if (!req.body.name && !req.body.email && !req.body.password) {
+      throw new Error("Please Enter All Fields.");
+    }
+    const result = await registerSchema.validateAsync(req.body, {
+      abortEarly: false,
     });
-  } else {
-    res.status(400);
-    throw new Error("Failed to Create the User");
+
+    const { name, email, password, picture } = result;
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      res.status(400);
+      throw new Error(`${email} is aleardy registered`);
+    }
+
+    const user = await User.create({ name, email, password, picture });
+
+    if (user) {
+      res.status(201).json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        picture: user.picture,
+        token: generateToken(user._id),
+      });
+
+      const response = {
+        from: "admin@chatapp.com",
+        to: user.email,
+        subject: "Sign-up Success",
+        html: welcomeMail,
+      };
+
+      transport.sendMail(response, (err, success) => {
+        if (err) {
+          console.log("Error: ", err);
+        } else {
+          console.log("Success: ", success);
+        }
+      });
+    } else {
+      res.status(400);
+      throw new Error("Failed to Create the User");
+    }
+  } catch (error) {
+    if (error.isJoi === true) res.status(422);
+    next(error);
   }
 });
 
-const authUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
+const authUser = asyncHandler(async (req, res, next) => {
+  try {
+    if (!req.body.email && !req.body.password) {
+      res.status(400);
+      throw new Error("Please Fill all the Feilds");
+    }
 
-  const user = await User.findOne({ email });
-
-  if (user && (await user.matchPassword(password))) {
-    res.json({
-      _id: user.id,
-      name: user.name,
-      email: user.email,
-      picture: user.picture,
-      token: generateToken(user._id),
+    const result = await loginSchema.validateAsync(req.body, {
+      abortEarly: false,
     });
-  } else {
-    res.status(401);
-    throw new Error("Invalid Email or Password");
+
+    const { email, password } = result;
+
+    const user = await User.findOne({ email });
+
+    if (user && (await user.matchPassword(password))) {
+      res.json({
+        _id: user.id,
+        name: user.name,
+        email: user.email,
+        picture: user.picture,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(401);
+      throw new Error("Invalid Email or Password");
+    }
+  } catch (error) {
+    if (error.isJoi === true) res.status(422);
+    next(error);
   }
 });
 
-// /api/user?search=janvi
 const allUsers = asyncHandler(async (req, res) => {
-  // const keyword = req.query.search;
-  // // console.log(keyword);
-  // console.log(req.user + "me in all");
-  // console.log(req.user._id);
-  //////////////////////////////////
   const keyword = req.query.search
     ? {
         $or: [

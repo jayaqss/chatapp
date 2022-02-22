@@ -26,7 +26,7 @@ const MyChats = ({ fetchAgain }) => {
       };
 
       const { data } = await axios.get("/api/chat", config);
-      console.log(data);
+      // console.log(data);
       setChats(data);
     } catch (error) {
       toast({
@@ -69,13 +69,13 @@ const MyChats = ({ fetchAgain }) => {
       >
         My Chats
         <GroupChatModal>
-        <Button
-          d="flex"
-          fontSize={{ base: "17px", md: "10px", lg: "17px" }}
-          rightIcon={<AddIcon />}
+          <Button
+            d="flex"
+            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
+            rightIcon={<AddIcon />}
           >
-          New Group Chat
-        </Button>
+            New Group Chat
+          </Button>
         </GroupChatModal>
       </Box>
       <Box

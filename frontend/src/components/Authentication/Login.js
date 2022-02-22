@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Button,
@@ -10,8 +10,8 @@ import {
   InputRightElement,
   useToast,
   VStack,
-} from '@chakra-ui/react';
-import axios from 'axios';
+} from "@chakra-ui/react";
+import axios from "axios";
 
 const Login = () => {
   // States
@@ -37,59 +37,45 @@ const Login = () => {
 
   const submitHandler = async () => {
     setLoading(true);
-    if (!email || !password) {
-      toast({
-        title: 'Please Fill all the Feilds',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom',
-      });
-      setLoading(false);
-      return;
-    }
-
-    // console.log(email, password);
     try {
       const config = {
         headers: {
-          'Content-type': 'application/json',
+          "Content-type": "application/json",
         },
       };
 
       const { data } = await axios.post(
-        '/api/user/login',
+        "/api/user/login",
         { email, password },
         config
       );
 
-      // console.log(JSON.stringify(data));
       toast({
-        title: 'Login Successful',
-        status: 'success',
+        title: "Login Successful",
+        status: "success",
         duration: 5000,
         isClosable: true,
-        position: 'bottom',
+        position: "bottom",
       });
-      localStorage.setItem('userInfo', JSON.stringify(data));
+      localStorage.setItem("userInfo", JSON.stringify(data));
       setLoading(false);
-      history.push('/chats');
+      history.push("/chats");
     } catch (error) {
       toast({
-        title: 'Error Occured!',
+        title: "Error Occured!",
         description: error.response.data.message,
-        status: 'error',
+        status: "error",
         duration: 5000,
         isClosable: true,
-        position: 'bottom',
+        position: "bottom",
       });
       setLoading(false);
     }
   };
 
   const guestUserHandler = () => {
-    setEmail('guest@example.com');
-    setPassword('123456');
+    setEmail("guest@example.com");
+    setPassword("123456");
   };
 
   return (
@@ -111,14 +97,14 @@ const Login = () => {
         </FormLabel>
         <InputGroup>
           <Input
-            type={show ? 'text' : 'password'}
+            type={show ? "text" : "password"}
             placeholder="Enter Your Password"
             value={password}
             onChange={passwordHandler}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={showPasswordHandler}>
-              {show ? 'Hide' : 'Show'}
+              {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>

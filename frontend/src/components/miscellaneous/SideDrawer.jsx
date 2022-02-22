@@ -29,8 +29,8 @@ import ProfileModal from "./ProfileModal";
 import UserListItem from "../userAvatar/UserListItem";
 import { ChatState } from "../../Context/ChatProvider";
 import { getSender } from "../../config/ChatLogics";
-import { effect } from "@chakra-ui/react";
-import { Badge } from 'rsuite';
+// import { effect } from "@chakra-ui/react";
+// import { Badge } from "rsuite";
 
 function SideDrawer() {
   const [search, setSearch] = useState("");
@@ -46,7 +46,7 @@ function SideDrawer() {
     notification,
     setNotification,
   } = ChatState();
-  console.log(user);
+  // console.log(user);
 
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -95,7 +95,7 @@ function SideDrawer() {
   };
 
   const accessChat = async (userId) => {
-    console.log(userId);
+    // console.log(userId);
 
     try {
       setLoadingChat(true);
@@ -154,15 +154,22 @@ function SideDrawer() {
         <div>
           <Menu>
             <MenuButton p={1}>
-              <BellIcon fontSize="2xl" m={1} />
+              <BellIcon
+                color={notification.length ? "red" : ""}
+                fontSize="2xl"
+                m={1}
+              />
             </MenuButton>
             <MenuList pl={2}>
               {!notification.length && "No New Messages"}
               {notification.map((notif) => (
-                <MenuItem key={notif._id} onClick={()=>{
-                  setSelectedChat(notif.chat);
-                  setNotification(notification.filter((n)=> n!==notif));
-                }}>
+                <MenuItem
+                  key={notif._id}
+                  onClick={() => {
+                    setSelectedChat(notif.chat);
+                    setNotification(notification.filter((n) => n !== notif));
+                  }}
+                >
                   {notif.chat.isGroupChat
                     ? `New Message in${notif.chat.chatName}`
                     : `New Message from ${getSender(user, notif.chat.users)}`}

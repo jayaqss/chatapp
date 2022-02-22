@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Button,
@@ -10,8 +10,8 @@ import {
   InputRightElement,
   VStack,
   useToast,
-} from '@chakra-ui/react';
-import axios from 'axios';
+} from "@chakra-ui/react";
+import axios from "axios";
 
 const SignUp = () => {
   // States
@@ -51,26 +51,26 @@ const SignUp = () => {
     setLoading(true);
     if (pics === undefined) {
       toast({
-        title: 'Please select an Image!',
-        status: 'Warning',
+        title: "Please select an Image!",
+        status: "Warning",
         duration: 5000,
         isClosable: true,
-        position: 'bottom',
+        position: "bottom",
       });
       return;
     }
 
     if (
-      pics.type === 'image/jpeg' ||
-      pics.type === 'image/png' ||
-      pics.type === 'image/jpg'
+      pics.type === "image/jpeg" ||
+      pics.type === "image/png" ||
+      pics.type === "image/jpg"
     ) {
       const data = new FormData();
-      data.append('file', pics);
-      data.append('upload_preset', 'chat-app');
-      data.append('cloud_name', 'dyshmgkra');
-      fetch('https://api.cloudinary.com/v1_1/dyshmgkra/image/upload', {
-        method: 'post',
+      data.append("file", pics);
+      data.append("upload_preset", "chat-app");
+      data.append("cloud_name", "dyshmgkra");
+      fetch("https://api.cloudinary.com/v1_1/dyshmgkra/image/upload", {
+        method: "post",
         body: data,
       })
         .then((res) => res.json())
@@ -85,11 +85,11 @@ const SignUp = () => {
         });
     } else {
       toast({
-        title: 'Please select an Image!',
-        status: 'Warning',
+        title: "Please select an Image!",
+        status: "Warning",
         duration: 5000,
         isClosable: true,
-        position: 'bottom',
+        position: "bottom",
       });
       setLoading(false);
       return;
@@ -102,65 +102,44 @@ const SignUp = () => {
 
   const submitHandler = async () => {
     setLoading(true);
-    if (!name || !email || !password || !confirmPassword) {
-      toast({
-        title: 'Please fill all the Fields',
-        status: 'Warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom',
-      });
-      setLoading(false);
-      return;
-    }
-    if (password !== confirmPassword) {
-      toast({
-        title: 'Passwords do not match',
-        status: 'Warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'bottom',
-      });
-      return;
-    }
-
     try {
       const config = {
         headers: {
-          'Content-type': 'application/json',
+          "Content-type": "application/json",
         },
       };
 
       const { data } = await axios.post(
-        '/api/user',
+        "/api/user",
         {
           name,
           email,
           password,
+          confirmPassword,
           picture,
         },
         config
       );
       toast({
-        title: 'Registration Successful',
-        status: 'success',
+        title: "Registration Successful",
+        status: "success",
         duration: 5000,
         isClosable: true,
-        position: 'bottom',
+        position: "bottom",
       });
 
-      localStorage.setItem('userInfo', JSON.stringify(data));
+      localStorage.setItem("userInfo", JSON.stringify(data));
 
       setLoading(false);
-      history.push('/chats');
+      history.push("/chats");
     } catch (error) {
       toast({
-        title: 'Error Occured!',
+        title: "Error Occured!",
         description: error.response.data.message,
-        status: 'error',
+        status: "error",
         duration: 5000,
         isClosable: true,
-        position: 'bottom',
+        position: "bottom",
       });
       setLoading(false);
     }
@@ -188,13 +167,13 @@ const SignUp = () => {
         </FormLabel>
         <InputGroup>
           <Input
-            type={show ? 'text' : 'password'}
+            type={show ? "text" : "password"}
             placeholder="Enter Your Password"
             onChange={passwordHandler}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={showPasswordHandler}>
-              {show ? 'Hide' : 'Show'}
+              {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>
@@ -206,13 +185,13 @@ const SignUp = () => {
         </FormLabel>
         <InputGroup>
           <Input
-            type={show ? 'text' : 'password'}
+            type={show ? "text" : "password"}
             placeholder="Confirm Password"
             onChange={confirmPasswordHandler}
           />
           <InputRightElement width="4.5rem">
             <Button h="1.75rem" size="sm" onClick={showPasswordHandler}>
-              {show ? 'Hide' : 'Show'}
+              {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
         </InputGroup>
