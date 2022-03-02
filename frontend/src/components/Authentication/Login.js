@@ -36,6 +36,19 @@ const Login = () => {
   };
 
   const submitHandler = async () => {
+    const graphqlQuery = {
+      query: `
+      {
+        login(loginInput:{email:"${email}", password:"${password}"}){
+          _id
+          name
+          token
+          email
+          picture
+        }
+      }
+      `,
+    };
     setLoading(true);
     try {
       const config = {
@@ -45,8 +58,8 @@ const Login = () => {
       };
 
       const { data } = await axios.post(
-        "/api/user/login",
-        { email, password },
+        "/graphql",
+        JSON.stringify(graphqlQuery),
         config
       );
 
@@ -57,10 +70,11 @@ const Login = () => {
         isClosable: true,
         position: "bottom",
       });
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      localStorage.setItem("userInfo", JSON.stringify(data.data.login));
       setLoading(false);
       history.push("/chats");
     } catch (error) {
+      console.log(error);
       toast({
         title: "Error Occured!",
         description: error.response.data.message,

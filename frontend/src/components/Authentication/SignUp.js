@@ -101,6 +101,20 @@ const SignUp = () => {
   };
 
   const submitHandler = async () => {
+    const graphqlQuery = {
+      query: `
+      mutation{
+        createUser(userInput:{email:"${email}",name:"${name}",password:"${password}",confirmPassword:"${confirmPassword}",picture:"${picture}"}){
+          _id
+          name
+          token
+          email
+          picture
+        }
+      }
+      `,
+    };
+
     setLoading(true);
     try {
       const config = {
@@ -110,16 +124,11 @@ const SignUp = () => {
       };
 
       const { data } = await axios.post(
-        "/api/user",
-        {
-          name,
-          email,
-          password,
-          confirmPassword,
-          picture,
-        },
+        "/graphql",
+        JSON.stringify(graphqlQuery),
         config
       );
+      console.log(data);
       toast({
         title: "Registration Successful",
         status: "success",
@@ -128,7 +137,7 @@ const SignUp = () => {
         position: "bottom",
       });
 
-      localStorage.setItem("userInfo", JSON.stringify(data));
+      localStorage.setItem("userInfo", JSON.stringify(data.data.createUser));
 
       setLoading(false);
       history.push("/chats");
