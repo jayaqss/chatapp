@@ -1,4 +1,4 @@
-const { buildSchema } = require("graphql");
+const { buildSchema } = require('graphql');
 
 module.exports = buildSchema(`
     type User {
@@ -63,6 +63,31 @@ module.exports = buildSchema(`
         fetched:[FetchData]
     }
 
+    input CreateGroupChatInputData {
+        chatName: String!
+        users: [Users]!
+        groupAdmin: String!
+    }
+
+    type CreateGroupChat {
+        _id: ID!
+        chatName: String!
+        users: [Users]!
+        isGroupChat: Boolean!
+        groupAdmin: String!
+    }
+    
+    input RenameGroupInputData {
+        chatId: ID!
+        chatName: String!
+    }
+
+    type RenameGroup {
+        chatId: ID!
+        chatName: String!
+        new: Boolean!
+    }
+
     type RootQuery {
         login(loginInput:UserLoginInputData): AuthData!
     }
@@ -71,6 +96,8 @@ module.exports = buildSchema(`
         createUser(userInput: UserInputData): AuthData!
         accessChat(fetchInput: FetchChat): FetchData!
         fetchAllChats: FetchAllData
+        createGroupChat(groupChatInput: CreateGroupChatInputData): CreateGroupChat!
+        renameGroup(renameGroupInput: RenameGroupInputData): RenameGroup!
     }
 
     schema {
