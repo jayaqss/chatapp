@@ -22,7 +22,12 @@ module.exports = buildSchema(`
         password: String!
     }
 
-
+    type UserFetch{
+        _id: ID!
+        name: String!
+        email: String!
+        picture: String
+    }
 
     type AuthData {
         _id: ID!
@@ -32,13 +37,40 @@ module.exports = buildSchema(`
         token: String!
     }
 
+    input FetchChat{
+        userId: String!
+    }
+
+    type FetchData{
+        _id: ID!
+        chatName: String!
+        isGroupChat: Boolean!
+        users: [UserFetch!]!
+        groupAdmin: [UserFetch]
+        createdAt: String
+        updatedAt: String
+    }
+
+    type GroupData{
+        _id: ID!
+        chatName: String!
+        isGroupChat: Boolean!
+        users: [UserFetch!]!
+        groupAdmin: [UserFetch!]!
+    }
+
+    type FetchAllData{
+        fetched:[FetchData]
+    }
+
     type RootQuery {
         login(loginInput:UserLoginInputData): AuthData!
     }
 
     type RootMutation {
         createUser(userInput: UserInputData): AuthData!
-        
+        accessChat(fetchInput: FetchChat): FetchData!
+        fetchAllChats: FetchAllData
     }
 
     schema {

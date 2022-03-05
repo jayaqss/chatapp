@@ -9,6 +9,8 @@ const { notFound, errorHandler } = require("./middleware/errorMiddleware");
 const graphqlSchema = require("./graphql/schema");
 const graphqlResolver = require("./graphql/resolvers");
 const { graphqlHTTP } = require("express-graphql");
+// const { protect } = require("./middleware/authMiddleware");
+const auth = require("./middleware/auth-graphql");
 
 dotenv.config();
 
@@ -16,6 +18,8 @@ connectDB();
 const app = express();
 
 app.use(express.json()); // to accept JSON data
+
+app.use(auth);
 
 app.use(
   "/graphql",
