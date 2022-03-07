@@ -78,10 +78,31 @@ function SideDrawer() {
         },
       };
 
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const graphqlQuery = {
+        query: `
+        mutation{
+          search(searchInput:{search:"h"}){
+            searchValue{
+              _id
+              name
+              email
+              password
+              picture
+            }
+          }
+        }
+        `,
+      };
 
+      const { data } = await axios.post(
+        "/graphql",
+        JSON.stringify(graphqlQuery),
+        config
+      );
+
+      console.log(data);
       setLoading(false);
-      setSearchResult(data);
+      setSearchResult(data.search.searchValue);
     } catch (error) {
       toast({
         title: "Error Occured!",

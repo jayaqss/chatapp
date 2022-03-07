@@ -1,4 +1,4 @@
-const { buildSchema } = require('graphql');
+const { buildSchema } = require("graphql");
 
 module.exports = buildSchema(`
     type User {
@@ -42,11 +42,11 @@ module.exports = buildSchema(`
     }
 
     type FetchData{
-        _id: ID!
-        chatName: String!
-        isGroupChat: Boolean!
-        users: [UserFetch!]!
-        groupAdmin: [UserFetch]
+        _id: ID
+        chatName: String
+        isGroupChat: Boolean
+        users: [UserFetch!]
+        groupAdmin: UserFetch
         createdAt: String
         updatedAt: String
     }
@@ -65,16 +65,15 @@ module.exports = buildSchema(`
 
     input CreateGroupChatInputData {
         chatName: String!
-        users: [Users]!
-        groupAdmin: String!
+        users: String
     }
 
-    type CreateGroupChat {
+    type CreateGroupChatData {
         _id: ID!
         chatName: String!
-        users: [Users]!
         isGroupChat: Boolean!
-        groupAdmin: String!
+        users: [User]!
+        groupAdmin: User
     }
     
     input RenameGroupInputData {
@@ -82,10 +81,23 @@ module.exports = buildSchema(`
         chatName: String!
     }
 
-    type RenameGroup {
+    type RenameGroupData {
         chatId: ID!
         chatName: String!
         new: Boolean!
+    }
+
+    input AddRemoveInputData {
+        chatId: ID!
+        userId: String!
+    } 
+    
+    input SearchInputData {
+        search: String!
+    } 
+    
+    type SearchData{
+        searchValue:[User]
     }
 
     type RootQuery {
@@ -96,8 +108,11 @@ module.exports = buildSchema(`
         createUser(userInput: UserInputData): AuthData!
         accessChat(fetchInput: FetchChat): FetchData!
         fetchAllChats: FetchAllData
-        createGroupChat(groupChatInput: CreateGroupChatInputData): CreateGroupChat!
-        renameGroup(renameGroupInput: RenameGroupInputData): RenameGroup!
+        createGroupChat(groupChatInput: CreateGroupChatInputData): CreateGroupChatData!
+        renameGroup(renameGroupInput: RenameGroupInputData): CreateGroupChatData!
+        addGroup(addGroupInput:AddRemoveInputData):CreateGroupChatData!
+        removeGroup(removeGroupInput:AddRemoveInputData):CreateGroupChatData!
+        search(searchInput:SearchInputData): SearchData
     }
 
     schema {

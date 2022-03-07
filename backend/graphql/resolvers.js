@@ -1,17 +1,17 @@
-const User = require('../Models/userModel');
-const Chat = require('../Models/chatModel');
-const Message = require('../Models/messageModel');
-const { registerSchema, loginSchema } = require('../helpers/validationSchema');
-const nodemailer = require('nodemailer');
-const generateToken = require('../config/generateToken');
-const welcomeMail = require('../data/welcomeMail');
-const { array } = require('joi');
+const User = require("../Models/userModel");
+const Chat = require("../Models/chatModel");
+const Message = require("../Models/messageModel");
+const { registerSchema, loginSchema } = require("../helpers/validationSchema");
+const nodemailer = require("nodemailer");
+const generateToken = require("../config/generateToken");
+const welcomeMail = require("../data/welcomeMail");
+const { array } = require("joi");
 var transport = nodemailer.createTransport({
-  host: 'smtp.mailtrap.io',
+  host: "smtp.mailtrap.io",
   port: 2525,
   auth: {
-    user: 'acd4b8fd341ff7',
-    pass: '7484a86d285338',
+    user: "acd4b8fd341ff7",
+    pass: "7484a86d285338",
   },
 });
 
@@ -19,7 +19,7 @@ module.exports = {
   createUser: async function ({ userInput }, req) {
     try {
       if (!userInput.name && !userInput.email && !userInput.password) {
-        throw new Error('Please Enter All Fields.');
+        throw new Error("Please Enter All Fields.");
       }
       const result = await registerSchema.validateAsync(userInput, {
         abortEarly: false,
@@ -36,17 +36,17 @@ module.exports = {
 
       if (user) {
         const response = {
-          from: 'admin@chatapp.com',
+          from: "admin@chatapp.com",
           to: user.email,
-          subject: 'Sign-up Success',
+          subject: "Sign-up Success",
           html: welcomeMail,
         };
 
         transport.sendMail(response, (err, success) => {
           if (err) {
-            console.log('Error: ', err);
+            console.log("Error: ", err);
           } else {
-            console.log('Success: ', success);
+            console.log("Success: ", success);
           }
         });
         return {
@@ -57,7 +57,7 @@ module.exports = {
           token: generateToken(user._id),
         };
       } else {
-        throw new Error('Failed to Create the User');
+        throw new Error("Failed to Create the User");
       }
     } catch (error) {
       throw new Error(error);
@@ -66,7 +66,7 @@ module.exports = {
   login: async function ({ loginInput }) {
     try {
       if (!loginInput.email && !loginInput.password) {
-        throw new Error('Please Fill all the Feilds');
+        throw new Error("Please Fill all the Feilds");
       }
 
       const result = await loginSchema.validateAsync(loginInput, {
@@ -86,7 +86,7 @@ module.exports = {
           token: generateToken(user._id),
         };
       } else {
-        throw new Error('Invalid Email or Password');
+        throw new Error("Invalid Email or Password");
       }
     } catch (error) {
       throw new Error(error);
@@ -97,8 +97,8 @@ module.exports = {
     // const tempId = "620343637404ddb370bcbd32";
 
     if (!userId) {
-      console.log('UserId param not sent with request');
-      throw new Error('UserId param not sent with request');
+      console.log("UserId param not sent with request");
+      throw new Error("UserId param not sent with request");
     }
 
     var isChat = await Chat.find({
@@ -108,12 +108,12 @@ module.exports = {
         { users: { $elemMatch: { $eq: userId } } },
       ],
     })
-      .populate('users', '-password')
-      .populate('latestMessage');
+      .populate("users", "-password")
+      .populate("latestMessage");
 
     isChat = await User.populate(isChat, {
-      path: 'latestMessage.sender',
-      select: 'name pic email',
+      path: "latestMessage.sender",
+      select: "name pic email",
     });
 
     if (isChat.length > 0) {
@@ -125,7 +125,7 @@ module.exports = {
       };
     } else {
       var chatData = {
-        chatName: 'sender',
+        chatName: "sender",
         isGroupChat: false,
         users: [req.user._id, userId],
       };
@@ -133,8 +133,8 @@ module.exports = {
       try {
         const createdChat = await Chat.create(chatData);
         const FullChat = await Chat.findOne({ _id: createdChat._id }).populate(
-          'users',
-          '-password'
+          "users",
+          "-password"
         );
         return {
           _id: FullChat._id,
@@ -149,22 +149,23 @@ module.exports = {
   },
   fetchAllChats: async function ({}, req) {
     if (!req.isAuth) {
-      const error = new Error('Not authenticated!');
+      const error = new Error("Not authenticated!");
       error.code = 401;
       throw error;
     }
     try {
-      // tempId = "620343637404ddb370bcbd32";
-      Chat.find({ users: { $elemMatch: { $eq: req.user._id } } })
-        .populate('users', '-password')
-        .populate('groupAdmin', '-password')
-        .populate('latestMessage')
+      // req.user = "620343637404ddb370bcbd32";
+      Chat.find({ users: { $elemMatch: { $eq: req.user } } })
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password")
+        .populate("latestMessage")
         .sort({ updatedAt: -1 })
         .then(async (results) => {
           results = await User.populate(results, {
-            path: 'latestMessage.sender',
-            select: 'name pic email',
+            path: "latestMessage.sender",
+            select: "name pic email",
           });
+          console.log(results);
           return {
             fetched: results,
           };
@@ -174,32 +175,39 @@ module.exports = {
     }
   },
 
-  createGroupChat: async function ({ groupChatInput }, req, res) {
-    if (!groupChatInput.users || !groupChatInput.name) {
-      return res.send({ message: 'Please Fill all the feilds' });
+  createGroupChat: async function ({ groupChatInput }, req) {
+    // req.user = "620343637404ddb370bcbd32";
+    if (!groupChatInput.users || !groupChatInput.chatName) {
+      throw new Error("Please Fill all the feilds");
     }
 
     var users = JSON.parse(groupChatInput.users);
 
     if (users.length < 2) {
-      return res.send('More than 2 users are required to form a group chat');
+      return res.send("More than 2 users are required to form a group chat");
     }
 
     users.push(req.user);
 
     try {
       const groupChat = await Chat.create({
-        chatName: groupChatInput.name,
+        chatName: groupChatInput.chatName,
         users: users,
         isGroupChat: true,
         groupAdmin: req.user,
       });
 
       const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
-        .populate('users', '-password')
-        .populate('groupAdmin', '-password');
+        .populate("users", "-password")
+        .populate("groupAdmin", "-password");
 
-      res.status(200).json(fullGroupChat);
+      return {
+        _id: fullGroupChat._id,
+        chatName: fullGroupChat.chatName,
+        isGroupChat: fullGroupChat.isGroupChat,
+        users: fullGroupChat.users,
+        groupAdmin: fullGroupChat.groupAdmin,
+      };
     } catch (error) {
       res.status(400);
       throw new Error(error.message);
@@ -218,13 +226,94 @@ module.exports = {
         new: true,
       }
     )
-      .populate('users', '-password')
-      .populate('groupAdmin', '-password');
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
 
     if (!updatedChat) {
-      throw new Error('Chat Not Found');
+      throw new Error("Chat Not Found");
     } else {
-      res.json(updatedChat);
+      return {
+        _id: updatedChat._id,
+        chatName: updatedChat.chatName,
+        isGroupChat: updatedChat.isGroupChat,
+        users: updatedChat.users,
+        groupAdmin: updatedChat.groupAdmin,
+      };
     }
+  },
+  addGroup: async function ({ addGroupInput }) {
+    const { chatId, userId } = addGroupInput;
+
+    // check if the requester is admin
+
+    const added = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $push: { users: userId },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!added) {
+      const error = new Error("Chat Not Found");
+      error.code = 404;
+      throw error;
+    } else {
+      return {
+        _id: added._id,
+        chatName: added.chatName,
+        isGroupChat: added.isGroupChat,
+        users: added.users,
+        groupAdmin: added.groupAdmin,
+      };
+    }
+  },
+  removeGroup: async function ({ removeGroupInput }) {
+    const { chatId, userId } = removeGroupInput;
+
+    // check if the requester is admin
+    const removed = await Chat.findByIdAndUpdate(
+      chatId,
+      {
+        $pull: { users: userId },
+      },
+      {
+        new: true,
+      }
+    )
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password");
+
+    if (!removed) {
+      const error = new Error("Chat Not Found");
+      error.code = 404;
+      throw error;
+    } else {
+      return {
+        _id: removed._id,
+        chatName: removed.chatName,
+        isGroupChat: removed.isGroupChat,
+        users: removed.users,
+        groupAdmin: removed.groupAdmin,
+      };
+    }
+  },
+  search: async function ({ searchInput }, req) {
+    // req.user = "620343637404ddb370bcbd32";
+    const keyword = searchInput.search
+      ? {
+          $or: [
+            { name: { $regex: searchInput.search, $options: "i" } },
+            { email: { $regex: searchInput.search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const users = await User.find(keyword).find({ _id: { $ne: req.user } });
+    return { searchValue: users };
   },
 };
