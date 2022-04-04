@@ -1,0 +1,19 @@
+.login-page {
+  top: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-image: url("../../../background.jpeg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
+
+mat-card {
+  width: 30%;
+  margin: 3% auto;
+  border-radius: 8px;
+}

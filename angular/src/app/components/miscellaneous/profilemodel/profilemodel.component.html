@@ -1,0 +1,24 @@
+<div class="container">
+  <button
+    type="button"
+    (click)="closeDialog()"
+    class="btn-close float-end"
+    aria-label="Close"
+  ></button>
+  <div class="container">
+    <div style="text-align: center">
+      <h2>{{ userInfo.name }}</h2>
+    </div>
+  </div>
+  <div class="text-center m-5">
+    <img
+      src="{{ userInfo.picture }}"
+      alt="image"
+      style="border-radius: 50%; max-width: 60%; height: auto"
+    />
+  </div>
+  <p class="fs-2 fw-lighter" style="text-align: center">
+    Email: {{ userInfo.email }}
+  </p>
+  <button (click)="closeDialog()" class="btn btn-light float-end">Close</button>
+</div>

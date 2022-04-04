@@ -1,0 +1,58 @@
+.styledContainer {
+  font-weight: 400;
+  // font-size: 14px;
+  color: #323232;
+  width: 30vw;
+  height: 88vh;
+  // margin: 10% auto;
+  margin: 1% 0% 0% 1%;
+  padding: 10px;
+  background-color: white;
+  border: 1px solid #f5f5f5;
+  border-radius: 15px;
+  -webkit-box-shadow: 0px 0px 10px 0px #f5f5f5;
+  box-shadow: 0px 0px 10px 0px #f5f5f5;
+
+  .headChatContainer {
+    display: flex;
+    justify-content: space-between;
+
+    h1 {
+      padding-left: 20px;
+      padding-top: 6px;
+    }
+
+    button {
+      font-size: 18px;
+      padding: 0px 25px;
+      border-radius: 9px;
+      background-color: rgb(235, 233, 241);
+    }
+
+    button:hover {
+      background-color: rgba(184, 174, 174, 0.685);
+    }
+  }
+
+  .chatsContainer {
+    width: 29vw;
+    height: 76vh;
+    overflow: auto;
+  }
+
+  .singleChatsContainer {
+    font-size: 1.3em;
+
+    width: 27vw;
+    height: 6.5vh;
+    // margin: 10% auto;
+    margin: 3% 0% 0% 2%;
+    cursor: pointer;
+    padding: 10px;
+    background-color: rgba(202, 193, 193, 0.473);
+    border: 1px solid #f5f5f5;
+    border-radius: 10px;
+    -webkit-box-shadow: 0px 0px 10px 0px #f5f5f5;
+    box-shadow: 0px 0px 10px 0px #f5f5f5;
+  }
+}

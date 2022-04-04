@@ -1,0 +1,46 @@
+<div class="styledContainer">
+  <div class="headChatContainer">
+    <h1>{{ userName }}</h1>
+    <!-- <button type="button" class="btn">New Group Chat</button> -->
+  </div>
+  <div class="chatsContainer">
+    <div class="singleChatsContainer">
+      <div class="message__area" *ngFor="let chat of allmessages">
+        <div
+          style="background-color: #bee3f8; float: right"
+          class="incoming"
+          *ngIf="chat.sender._id == user._id"
+          class="number"
+        >
+          {{ chat.content }}
+        </div>
+        <div
+          style="background-color: #b9f5d0"
+          class="outgoing"
+          *ngIf="chat.sender._id != user._id"
+          class="number"
+        >
+          {{ chat.content }}
+        </div>
+      </div>
+      <!-- <form>
+        <input
+          type="text"
+          placeholder="enter a message"
+          [(ngModel)]="message"
+          name="message"
+        />
+        <button (click)="sendMsg()">SEND</button>
+      </form> -->
+
+      <input
+        [(ngModel)]="message"
+        id="textareaa"
+        cols="30"
+        rows="1"
+        placeholder="Write a message..."
+      />
+      <button (click)="sendMsg()">SEND</button>
+    </div>
+  </div>
+</div>

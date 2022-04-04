@@ -1,0 +1,67 @@
+<div id="mySidenav" class="sidenav">
+  <h2>Search Users</h2>
+  <a href="javascript:void(0)" class="closebtn" (click)="closeNav()">&times;</a>
+  <hr />
+  <input type="text" [(ngModel)]="searchUserValue" />
+  <button (click)="searchUser()">Go</button>
+  <app-userlistitem
+    *ngFor="let user of searchUserData; let i = index"
+    [user]="user"
+    [index]="i"
+    (click)="accessChat(user._id)"
+  ></app-userlistitem>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <!--  Show this only on mobile to medium screens  -->
+  <a class="navbar-brand d-lg-none" href="#">Chat App</a>
+
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarToggle"
+    aria-controls="navbarToggle"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <!--  Use flexbox utility classes to change how the child elements are justified  -->
+  <div
+    class="collapse navbar-collapse justify-content-between"
+    id="navbarToggle"
+  >
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <div
+          style="cursor: pointer; display: flex; padding: 0% 2vh"
+          (click)="openNav()"
+        >
+          <!-- <mat-icon>search</mat-icon>  -->
+          Search User
+        </div>
+      </li>
+    </ul>
+
+    <!--   Show this only lg screens and up   -->
+    <a class="navbar-brand d-none d-lg-block" href="#">ChatApp</a>
+
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <img
+          src="{{ userInfo.picture }}"
+          class="rounded-circle"
+          style="width: 50px; height: 100%; cursor: pointer"
+          [matMenuTriggerFor]="menu"
+          alt="Avatar"
+        />
+        <mat-menu #menu="matMenu">
+          <button (click)="openDialog()" mat-menu-item>Profile</button>
+          <button (click)="logoutHandler()" mat-menu-item>Log Out</button>
+        </mat-menu>
+      </li>
+    </ul>
+  </div>
+</nav>

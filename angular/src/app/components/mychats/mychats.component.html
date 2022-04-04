@@ -1,0 +1,22 @@
+<app-sidedrawer></app-sidedrawer>
+<div class="styledContainer">
+  <div class="headChatContainer">
+    <h1>My Chats</h1>
+    <button type="button" class="btn">New Group Chat</button>
+  </div>
+  <div class="chatsContainer">
+    <div
+      (click)="showChat(chat)"
+      *ngFor="let chat of fetchchatData; let i = index"
+      class="singleChatsContainer"
+    >
+      <p>{{ !chat.isGroupChat ? getSender(chat.users) : chat.chatName }}</p>
+    </div>
+  </div>
+</div>
+
+<app-chat-box
+  *ngIf="isChatSelected"
+  [chatDetail]="chatDetail"
+  [userName]="chatUserName"
+></app-chat-box>

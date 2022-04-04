@@ -11,12 +11,15 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css'],
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
   loginForm!: FormGroup;
 
-  constructor(private authService: AuthenticationService) {}
+  constructor(
+    private authService: AuthenticationService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.loginForm = new FormGroup({
@@ -35,7 +38,11 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.loginForm.invalid) return;
     this.authService.login(this.loginForm.value).subscribe(
-      (res) => console.log(res),
+      (res) => {
+        console.log(res);
+
+        this.router.navigate(['/chats']);
+      },
       (err) => console.log(err)
     );
   }
